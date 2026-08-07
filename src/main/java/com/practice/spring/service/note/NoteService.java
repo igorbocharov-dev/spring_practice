@@ -1,11 +1,9 @@
 package com.practice.spring.service.note;
 
-import com.practice.spring.dto.note.CreateNoteRequest;
-import com.practice.spring.dto.note.LocationNoteResponse;
-import com.practice.spring.dto.note.NoteResponse;
-import com.practice.spring.dto.note.UpdateNoteRequest;
+import com.practice.spring.dto.note.*;
 import com.practice.spring.entity.note.Note;
 import com.practice.spring.exception.note.NoteNotFoundException;
+import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.util.validator.IdValidator;
 import com.practice.spring.util.validator.note.NoteLimitValidator;
@@ -26,19 +24,23 @@ public class NoteService {
     private final NoteLimitValidator noteLimitValidator;
     private final NoteRepository noteRepository;
     private final Counter notesCreatedCounter;
+    private final NoteMapper noteMapper;
 
     @Autowired
     public NoteService(IdValidator idValidator,
                        NoteLimitValidator noteLimitValidator,
-                       @Qualifier(value = "NoteRepository") NoteRepository noteRepository, Counter notesCreatedCounter) {
+                       @Qualifier(value = "NoteRepository") NoteRepository noteRepository,
+                       Counter notesCreatedCounter, NoteMapper noteMapper) {
         this.idValidator = idValidator;
         this.noteLimitValidator = noteLimitValidator;
         this.noteRepository = noteRepository;
         this.notesCreatedCounter = notesCreatedCounter;
+        this.noteMapper = noteMapper;
     }
 
-    public List<Note> findAll(){
-        return noteRepository.findAll();
+    public NotesResponse findAll(){
+        List<NoteResponse> notes = noteRepository.findAll().stream().map(noteMapper::toNoteResponse).toList();
+        return new NotesResponse(notes);
     }
 
     public LocationNoteResponse createNote(CreateNoteRequest createNoteRequest){
@@ -53,13 +55,17 @@ public class NoteService {
         idValidator.validate(id);
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new NoteNotFoundException("Заметка с id " + id + " не найдена"));
-        return new NoteResponse(note.getTitle(), note.getBody());
+        return noteMapper.toNoteResponse(note);
     }
 
     public NoteResponse update(Long id, UpdateNoteRequest updateNoteRequest){
         idValidator.validate(id);
-        Note note = noteRepository.update(id, new Note(updateNoteRequest.title(), updateNoteRequest.body()));
-        return new NoteResponse(note.getTitle(), note.getBody());
+        Note newValue = new Note(updateNoteRequest.title(), updateNoteRequest.body());
+        Note previousValue = noteRepository.update(id, newValue);
+        if(previousValue == null) {
+            throw new NoteNotFoundException("Заметки с id " + id + " не существует");
+        }
+        return noteMapper.toNoteResponse(newValue);
     }
 
     public void delete(Long id){

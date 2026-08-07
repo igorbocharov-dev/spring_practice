@@ -1,4 +1,4 @@
-package com.practice.spring.config;
+package com.practice.spring.config.time;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

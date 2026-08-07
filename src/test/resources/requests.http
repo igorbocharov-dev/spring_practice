@@ -1,5 +1,5 @@
 ###
-POST http://localhost:8080/note/create
+POST http://localhost:8080/notes/create
 Content-Type: application/json
 
 {

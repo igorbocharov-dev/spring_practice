@@ -50,4 +50,14 @@ public class ApiGlobalHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         Instant.now(clock), null));
     }
+
+    @ExceptionHandler(ParseNoteException.class)
+    public ResponseEntity<ApiErrorResponse> parseNotesHandle(ParseNoteException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiErrorResponse(
+                        ErrorType.PARSE_NOTE_ERROR.name(),
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        Instant.now(clock), null));
+    }
 }

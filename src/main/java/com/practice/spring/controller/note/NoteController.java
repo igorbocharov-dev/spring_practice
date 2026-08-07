@@ -2,6 +2,7 @@ package com.practice.spring.controller.note;
 
 import com.practice.spring.dto.note.CreateNoteRequest;
 import com.practice.spring.dto.note.NoteResponse;
+import com.practice.spring.dto.note.NotesResponse;
 import com.practice.spring.dto.note.UpdateNoteRequest;
 import com.practice.spring.service.note.NoteService;
 import jakarta.validation.Valid;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/note")
+@RequestMapping("/notes")
 public class NoteController {
 
     private final NoteService noteService;
@@ -27,6 +28,11 @@ public class NoteController {
     public ResponseEntity<Void> createNote(@RequestBody @Valid CreateNoteRequest createNoteRequest){
         log.info("Request to create note with title: {} ; and body: {}", createNoteRequest.title(), createNoteRequest.body());
         return ResponseEntity.created(noteService.createNote(createNoteRequest).location()).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<NotesResponse> getNotes(){
+        return ResponseEntity.ok(noteService.findAll());
     }
 
     @GetMapping("/{id}")

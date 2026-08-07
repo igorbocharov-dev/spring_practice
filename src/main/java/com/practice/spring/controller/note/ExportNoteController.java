@@ -1,5 +1,6 @@
 package com.practice.spring.controller.note;
 
+import com.practice.spring.dto.note.ExportNotesResult;
 import com.practice.spring.service.note.exporter.ExportNoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/note/export")
+@RequestMapping("/notes/export")
 public class ExportNoteController {
 
     private final ExportNoteService exportNoteService;
@@ -19,8 +20,11 @@ public class ExportNoteController {
         this.exportNoteService = exportNoteService;
     }
 
-    @GetMapping()
-    public ResponseEntity<String> exportNotes(@RequestParam ("format") String format){
-        return ResponseEntity.ok(exportNoteService.export(format));
+    @GetMapping
+    public ResponseEntity<byte []> exportNotes(@RequestParam ("format") String format){
+        ExportNotesResult exportNotesResult = exportNoteService.export(format);
+        return ResponseEntity.ok()
+                .contentType(exportNotesResult.contentType())
+                .body(exportNotesResult.data());
     }
 }
