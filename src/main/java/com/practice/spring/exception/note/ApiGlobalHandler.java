@@ -42,10 +42,20 @@ public class ApiGlobalHandler {
     }
 
     @ExceptionHandler(UnsupportedNoteExportFormatException.class)
-    public ResponseEntity<ApiErrorResponse> IllegalExportFormatHandle(UnsupportedNoteExportFormatException e){
+    public ResponseEntity<ApiErrorResponse> unsupportedExportFormatHandle(UnsupportedNoteExportFormatException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiErrorResponse(
-                        ErrorType.EXPORT_NOTE_FORMAT_ERROR.name(),
+                        ErrorType.UNSUPPORTED_EXPORT_NOTE_FORMAT_ERROR.name(),
+                        e.getMessage(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        Instant.now(clock), null));
+    }
+
+    @ExceptionHandler(IllegalNoteExportFormatException.class)
+    public ResponseEntity<ApiErrorResponse> IllegalExportFormatHandle(IllegalNoteExportFormatException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiErrorResponse(
+                        ErrorType.ILLEGAL_EXPORT_NOTE_FORMAT_ERROR.name(),
                         e.getMessage(),
                         HttpStatus.BAD_REQUEST.value(),
                         Instant.now(clock), null));

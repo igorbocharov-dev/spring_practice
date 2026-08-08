@@ -27,7 +27,7 @@ public class JsonExporter implements NoteExporter{
         try {
             data = objectMapper.writeValueAsBytes(notes);
         } catch (JacksonException e) {
-            throw new ParseNoteException("Ошибка при записи значения 'notes' в JSON", e.getCause());
+            throw new ParseNoteException("Ошибка при записи значения 'notes' в JSON", e);
         }
         return new ExportNotesResult(data, MediaType.APPLICATION_JSON);
     }

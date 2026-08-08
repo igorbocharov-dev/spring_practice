@@ -45,10 +45,11 @@ public class NoteService {
 
     public LocationNoteResponse createNote(CreateNoteRequest createNoteRequest){
         noteLimitValidator.validate(noteRepository.count());
-        Long id = noteRepository.save(new Note(createNoteRequest.title(), createNoteRequest.body()));
+        Note savedNote = noteRepository.save(new Note(createNoteRequest.title(), createNoteRequest.body()));
+        Long id = savedNote.getId();
         notesCreatedCounter.increment();
         log.info("Creating note with id: {}", id);
-        return new LocationNoteResponse(URI.create("/note/" + id));
+        return new LocationNoteResponse(URI.create("/notes/" + id));
     }
 
     public NoteResponse findById(Long id){

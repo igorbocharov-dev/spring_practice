@@ -11,7 +11,7 @@ public interface NoteRepository {
 
     List<Note> findAll();
 
-    Long save(Note note);
+    Note save(Note note);
 
     Optional<Note> findById(Long id);
 

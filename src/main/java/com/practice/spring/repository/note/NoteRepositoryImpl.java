@@ -29,12 +29,12 @@ public class NoteRepositoryImpl implements NoteRepository{
     }
 
     @Override
-    public Long save(Note note) {
+    public Note save(Note note) {
         Long id = incrementId.incrementAndGet();
         note.setId(id);
         storage.put(id, note);
         log.info("Save note with id: {}", id);
-        return id;
+        return note;
     }
 
     @Override

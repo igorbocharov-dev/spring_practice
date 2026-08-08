@@ -27,7 +27,7 @@ public class XmlExporter implements NoteExporter{
         try {
             data = xmlMapper.writeValueAsBytes(notes);
         } catch (JsonProcessingException e) {
-            throw new ParseNoteException("Ошибка при записи значения 'notes' в XML", e.getCause());
+            throw new ParseNoteException("Ошибка при записи значения 'notes' в XML", e);
         }
         return new ExportNotesResult(data, MediaType.APPLICATION_XML);
     }
