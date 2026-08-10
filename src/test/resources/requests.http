@@ -1,0 +1,14 @@
+###
+POST http://localhost:8080/notes/create
+Content-Type: application/json
+
+{
+  "title": "Test note",
+  "body": "Body note"
+}
+
+###
+GET http://localhost:8080/actuator/health
+
+###
+GET http://localhost:8080/actuator/prometheus
