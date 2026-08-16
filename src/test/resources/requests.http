@@ -3,8 +3,9 @@ POST http://localhost:8080/notes/create
 Content-Type: application/json
 
 {
-  "title": "Test note",
-  "body": "Body note"
+  "title": "Моя заметка",
+  "text": "Текст заметки",
+  "author": "Paparazzi"
 }
 
 ###

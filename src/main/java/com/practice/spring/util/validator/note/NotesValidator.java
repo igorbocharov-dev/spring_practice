@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class NotesValidator implements Validator<List<Note>> {
+public final class NotesValidator implements Validator<List<Note>> {
 
     @Override
     public void validate(List<Note> notes) {

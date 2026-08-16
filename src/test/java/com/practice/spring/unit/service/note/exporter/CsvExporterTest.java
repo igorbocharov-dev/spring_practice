@@ -27,7 +27,7 @@ public class CsvExporterTest {
         String csv = new String(result.data(), StandardCharsets.UTF_8);
 
         assertTrue(csv.contains(NoteFactory.title));
-        assertTrue(csv.contains(NoteFactory.body));
+        assertTrue(csv.contains(NoteFactory.text));
 
         assertEquals(MediaType.parseMediaType("text/csv"), result.contentType());
     }

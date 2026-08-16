@@ -1,14 +1,13 @@
 package com.practice.spring.unit.service.note.exporter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.practice.spring.dto.note.ExportNotesResult;
 import com.practice.spring.entity.note.Note;
-import com.practice.spring.service.note.exporter.CsvExporter;
 import com.practice.spring.service.note.exporter.JsonExporter;
 import com.practice.spring.service.note.exporter.NoteExporter;
 import com.practice.spring.support.factory.NoteFactory;
-import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
-import tools.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -29,7 +28,7 @@ public class JsonExporterTest {
         String json = new String(result.data(), StandardCharsets.UTF_8);
 
         assertTrue(json.contains(NoteFactory.title));
-        assertTrue(json.contains(NoteFactory.body));
+        assertTrue(json.contains(NoteFactory.text));
 
         assertEquals(MediaType.APPLICATION_JSON, result.contentType());
     }

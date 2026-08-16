@@ -8,6 +8,7 @@ import com.practice.spring.entity.note.Note;
 import com.practice.spring.exception.note.NoteNotFoundException;
 import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
+import com.practice.spring.service.note.NoteRevisionService;
 import com.practice.spring.service.note.NoteService;
 import com.practice.spring.support.factory.NoteFactory;
 import com.practice.spring.util.validator.IdValidator;
@@ -19,6 +20,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 import java.util.Optional;
 
@@ -40,25 +43,27 @@ public class NoteServiceTest {
     private Counter notesCreatedCounter;
     @Mock
     private NoteMapper noteMapper;
+    @Mock
+    private NoteRevisionService noteRevisionService;
+    @Mock
+    private CacheManager cacheManager;
 
     @InjectMocks
     private NoteService noteService;
 
     @Test
     void createNote_ShouldCreateEntityAndReturnLocation(){
-        CreateNoteRequest createNoteRequest = NoteFactory.createNoteRequest();
         Long id = 1L;
+        Note note = NoteFactory.note(id);
+        CreateNoteRequest createNoteRequest = NoteFactory.createNoteRequest();
         LocationNoteResponse expectedResponse = NoteFactory.locationNoteResponse(id);
 
-        when(noteRepository.save(any(Note.class))).thenAnswer(invocation -> {
-            Note savedNote = invocation.getArgument(0);
-            savedNote.setId(id);
-            return savedNote;
-        });
+        when(noteMapper.toEntity(createNoteRequest)).thenReturn(note);
+        when(noteRepository.save(note)).thenReturn(note);
 
         LocationNoteResponse response = noteService.createNote(createNoteRequest);
 
-        verify(noteLimitValidator).validate(any(Integer.class));
+        verify(noteLimitValidator).validate(any(Long.class));
 
         assertEquals(expectedResponse.location(), response.location());
 
@@ -68,34 +73,34 @@ public class NoteServiceTest {
         Note savedNote = noteCapture.getValue();
 
         assertEquals(savedNote.getTitle(), createNoteRequest.title());
-        assertEquals(savedNote.getBody(), createNoteRequest.body());
+        assertEquals(savedNote.getText(), createNoteRequest.text());
 
         verify(notesCreatedCounter).increment();
     }
 
     @Test
-    void findById_ShouldReturnNoteResponse_WhenIdIsCorrectly(){
+    void getNoteResponseById_ShouldReturnNoteResponse_WhenIdIsCorrectly(){
         Long id = 1L;
         Note note = NoteFactory.note(id);
         NoteResponse expectedResponse = NoteFactory.noteResponse();
         when(noteRepository.findById(id)).thenReturn(Optional.of(note));
         when(noteMapper.toNoteResponse(note)).thenReturn(expectedResponse);
 
-        NoteResponse response = noteService.findById(id);
+        NoteResponse response = noteService.getNoteResponseById(id);
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);
 
         assertEquals(expectedResponse.title(), response.title());
-        assertEquals(expectedResponse.body(), response.body());
+        assertEquals(expectedResponse.text(), response.text());
     }
 
     @Test
-    void findById_ShouldThrowNoteNotFoundException_WhenIdIsInvalid(){
+    void getNoteResponseById_ShouldThrowNoteNotFoundException_WhenIdIsInvalid(){
         Long id = 999L;
         when(noteRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoteNotFoundException.class, ()-> noteService.findById(id));
+        assertThrows(NoteNotFoundException.class, ()-> noteService.getNoteResponseById(id));
     }
 
     @Test
@@ -103,33 +108,34 @@ public class NoteServiceTest {
         Long id = 1L;
         Note previousValue = NoteFactory.note(id);
         UpdateNoteRequest updateNoteRequest = NoteFactory.updateNoteRequest();
-        NoteResponse expectedNoteResponse = NoteFactory.updatedNoteResponse(updateNoteRequest);
+        NoteResponse expectedNoteResponse = NoteFactory.updatedNoteResponse(updateNoteRequest, previousValue.getAuthor());
 
-        when(noteRepository.update(eq(id), any(Note.class))).thenReturn(previousValue);
-        when(noteMapper.toNoteResponse(any(Note.class))).thenReturn(expectedNoteResponse);
+        when(noteRepository.findById(id)).thenReturn(Optional.of(previousValue));
+        when(noteMapper.toNoteResponse(previousValue)).thenReturn(expectedNoteResponse);
+        when(cacheManager.getCache(any(String.class))).thenReturn(new ConcurrentMapCache("test_cache"));
 
         NoteResponse response = noteService.update(id, updateNoteRequest);
 
         verify(idValidator).validate(id);
-        verify(noteRepository).update(eq(id), any(Note.class));
-        verify(noteMapper).toNoteResponse(any(Note.class));
+        verify(noteRepository).findById(id);
+        verify(noteMapper).toNoteResponse(previousValue);
 
         assertEquals(expectedNoteResponse.title(), response.title());
-        assertEquals(expectedNoteResponse.body(), response.body());
+        assertEquals(expectedNoteResponse.text(), response.text());
 
     }
 
     @Test
     void update_ShouldThrowNoteNotFoundException_WhenNoteDoesNotExists(){
-        Long id = 1L;
+        Long id = 999L;
         UpdateNoteRequest updateNoteRequest = NoteFactory.updateNoteRequest();
 
-        when(noteRepository.update(eq(id), any(Note.class))).thenReturn(null);
+        when(noteRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(NoteNotFoundException.class, () -> noteService.update(id, updateNoteRequest));
 
         verify(idValidator).validate(id);
-        verify(noteRepository).update(any(Long.class), any(Note.class));
+        verify(noteRepository).findById(id);
         verifyNoInteractions(noteMapper);
     }
 }

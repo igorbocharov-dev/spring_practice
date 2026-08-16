@@ -7,7 +7,6 @@ import com.practice.spring.util.validator.note.NotesValidator;
 import com.practice.spring.util.validator.note.exporter.ExportNoteFormatValidator;
 import com.practice.spring.util.validator.note.exporter.NoteExporterValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class ExportNoteService {
                              NoteExporterValidator noteExporterValidator,
                              ExportNoteFormatValidator exportNoteFormatValidator,
                              NotesValidator notesValidator,
-                             @Qualifier(value = "NoteRepository") NoteRepository noteRepository) {
+                             NoteRepository noteRepository) {
         this.exporters = exporters;
         this.noteExporterValidator = noteExporterValidator;
         this.exportNoteFormatValidator = exportNoteFormatValidator;

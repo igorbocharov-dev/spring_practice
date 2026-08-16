@@ -1,4 +1,4 @@
-package com.practice.spring.metrics;
+package com.practice.spring.config.metrics;
 
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
