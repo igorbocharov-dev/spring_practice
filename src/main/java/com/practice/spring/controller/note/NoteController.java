@@ -3,8 +3,8 @@ package com.practice.spring.controller.note;
 import com.practice.spring.dto.note.*;
 import com.practice.spring.dto.noteRevision.NoteRevisionResponse;
 import com.practice.spring.dto.paging.SliceResponse;
-import com.practice.spring.service.note.NoteRevisionService;
 import com.practice.spring.service.note.NoteService;
+import com.practice.spring.service.noteRevision.NoteRevisionService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -30,10 +30,11 @@ public class NoteController {
         this.noteRevisionService = noteRevisionService;
     }
 
+
     @PostMapping("/create")
     public ResponseEntity<Void> createNote(@RequestBody @Valid CreateNoteRequest createNoteRequest){
         log.info("Request to create note with title: {} ; and text: {}", createNoteRequest.title(), createNoteRequest.text());
-        return ResponseEntity.created(noteService.createNote(createNoteRequest).location()).build();
+        return ResponseEntity.created(noteService.create(createNoteRequest).location()).build();
     }
 
     @GetMapping

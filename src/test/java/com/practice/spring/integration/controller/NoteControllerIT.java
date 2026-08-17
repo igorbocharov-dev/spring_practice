@@ -8,7 +8,7 @@ import com.practice.spring.dto.note.UpdateNoteRequest;
 import com.practice.spring.dto.noteRevision.NoteRevisionResponse;
 import com.practice.spring.dto.paging.SliceResponse;
 import com.practice.spring.entity.note.Note;
-import com.practice.spring.entity.note.NoteRevision;
+import com.practice.spring.entity.noteRevision.NoteRevision;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.repository.note.NoteRevisionRepository;
 import com.practice.spring.support.config.AbstractSpringBootIT;

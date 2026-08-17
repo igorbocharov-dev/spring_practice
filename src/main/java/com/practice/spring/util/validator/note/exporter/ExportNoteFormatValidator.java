@@ -1,7 +1,6 @@
 package com.practice.spring.util.validator.note.exporter;
 
 import com.practice.spring.exception.note.IllegalNoteExportFormatException;
-import com.practice.spring.exception.note.UnsupportedNoteExportFormatException;
 import com.practice.spring.util.validator.Validator;
 import org.springframework.stereotype.Component;
 

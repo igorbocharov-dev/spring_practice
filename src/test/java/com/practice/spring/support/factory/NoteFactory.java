@@ -2,7 +2,7 @@ package com.practice.spring.support.factory;
 
 import com.practice.spring.dto.note.*;
 import com.practice.spring.entity.note.Note;
-import com.practice.spring.entity.note.NoteRevision;
+import com.practice.spring.entity.noteRevision.NoteRevision;
 
 import java.net.URI;
 import java.util.ArrayList;

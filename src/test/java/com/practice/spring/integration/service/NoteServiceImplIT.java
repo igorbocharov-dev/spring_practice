@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Slf4j
-public class NoteServiceIT extends AbstractSpringBootIT {
+public class NoteServiceImplIT extends AbstractSpringBootIT {
 
     @Autowired
     @MockitoSpyBean
@@ -42,7 +42,7 @@ public class NoteServiceIT extends AbstractSpringBootIT {
     }
 
     @Test
-    void update_ShouldDemonstrationOptimisticLocking() throws InterruptedException, ExecutionException {
+    void update_ShouldDemonstrationOptimisticLocking() throws InterruptedException {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
         CountDownLatch latch = new CountDownLatch(2);
 
@@ -124,8 +124,7 @@ public class NoteServiceIT extends AbstractSpringBootIT {
 
         assertSame(result1, result2);
 
-        verify(noteRepository, times(1)).findLastCreatedAtByAuthor(author);
-        verify(noteRepository, times(1)).countByAuthor(author);
+        verify(noteRepository, times(1)).getAuthorSummary(author);
     }
 
 }

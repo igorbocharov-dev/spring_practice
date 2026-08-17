@@ -1,7 +1,7 @@
 package com.practice.spring.controller.note;
 
 import com.practice.spring.dto.note.ImportNotesRequest;
-import com.practice.spring.service.note.ImportNoteService;
+import com.practice.spring.service.note.importer.ImportNoteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

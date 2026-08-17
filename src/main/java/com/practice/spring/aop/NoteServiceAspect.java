@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -23,7 +24,7 @@ public class NoteServiceAspect {
         this.requestContext = requestContext;
     }
 
-    @Pointcut("execution(public * com.practice.spring.service.note.NoteService.* (..))")
+    @Pointcut("execution(public * com.practice.spring.service.note.NoteService+.* (..))")
     private void anyPublicMethods(){}
 
     @Around("anyPublicMethods()")
@@ -35,7 +36,15 @@ public class NoteServiceAspect {
             return joinPoint.proceed();
         } finally {
             long duration = System.currentTimeMillis() - timeToBefore;
-            LOGGER.info("NoteService.{} took {} ms, requestId={}", methodName, duration, requestContext.getRequestId());
+            LOGGER.info("NoteService.{} took {} ms, requestId={}", methodName, duration, getRequestId());
+        }
+    }
+
+    private String getRequestId(){
+        try {
+            return requestContext.getRequestId();
+        } catch (ScopeNotActiveException e) {
+            return "N/A";
         }
     }
 }

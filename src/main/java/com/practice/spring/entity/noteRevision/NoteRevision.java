@@ -1,5 +1,6 @@
-package com.practice.spring.entity.note;
+package com.practice.spring.entity.noteRevision;
 
+import com.practice.spring.entity.note.Note;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

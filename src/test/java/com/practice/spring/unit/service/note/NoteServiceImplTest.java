@@ -8,8 +8,8 @@ import com.practice.spring.entity.note.Note;
 import com.practice.spring.exception.note.NoteNotFoundException;
 import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
-import com.practice.spring.service.note.NoteRevisionService;
-import com.practice.spring.service.note.NoteService;
+import com.practice.spring.service.note.NoteServiceImpl;
+import com.practice.spring.service.noteRevision.NoteRevisionService;
 import com.practice.spring.support.factory.NoteFactory;
 import com.practice.spring.util.validator.IdValidator;
 import com.practice.spring.util.validator.note.NoteLimitValidator;
@@ -20,8 +20,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCache;
 
 import java.util.Optional;
 
@@ -31,7 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class NoteServiceTest {
+public class NoteServiceImplTest {
 
     @Mock
     private IdValidator idValidator;
@@ -45,11 +43,9 @@ public class NoteServiceTest {
     private NoteMapper noteMapper;
     @Mock
     private NoteRevisionService noteRevisionService;
-    @Mock
-    private CacheManager cacheManager;
 
     @InjectMocks
-    private NoteService noteService;
+    private NoteServiceImpl noteServiceImpl;
 
     @Test
     void createNote_ShouldCreateEntityAndReturnLocation(){
@@ -61,7 +57,7 @@ public class NoteServiceTest {
         when(noteMapper.toEntity(createNoteRequest)).thenReturn(note);
         when(noteRepository.save(note)).thenReturn(note);
 
-        LocationNoteResponse response = noteService.createNote(createNoteRequest);
+        LocationNoteResponse response = noteServiceImpl.create(createNoteRequest);
 
         verify(noteLimitValidator).validate(any(Long.class));
 
@@ -86,7 +82,7 @@ public class NoteServiceTest {
         when(noteRepository.findById(id)).thenReturn(Optional.of(note));
         when(noteMapper.toNoteResponse(note)).thenReturn(expectedResponse);
 
-        NoteResponse response = noteService.getNoteResponseById(id);
+        NoteResponse response = noteServiceImpl.getNoteResponseById(id);
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);
@@ -100,7 +96,7 @@ public class NoteServiceTest {
         Long id = 999L;
         when(noteRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoteNotFoundException.class, ()-> noteService.getNoteResponseById(id));
+        assertThrows(NoteNotFoundException.class, ()-> noteServiceImpl.getNoteResponseById(id));
     }
 
     @Test
@@ -112,9 +108,8 @@ public class NoteServiceTest {
 
         when(noteRepository.findById(id)).thenReturn(Optional.of(previousValue));
         when(noteMapper.toNoteResponse(previousValue)).thenReturn(expectedNoteResponse);
-        when(cacheManager.getCache(any(String.class))).thenReturn(new ConcurrentMapCache("test_cache"));
 
-        NoteResponse response = noteService.update(id, updateNoteRequest);
+        NoteResponse response = noteServiceImpl.update(id, updateNoteRequest);
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);
@@ -132,7 +127,7 @@ public class NoteServiceTest {
 
         when(noteRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoteNotFoundException.class, () -> noteService.update(id, updateNoteRequest));
+        assertThrows(NoteNotFoundException.class, () -> noteServiceImpl.update(id, updateNoteRequest));
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);

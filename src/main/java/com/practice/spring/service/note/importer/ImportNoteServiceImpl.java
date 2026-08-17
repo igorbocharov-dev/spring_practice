@@ -1,4 +1,4 @@
-package com.practice.spring.service.note;
+package com.practice.spring.service.note.importer;
 
 import com.practice.spring.dto.note.CreateNoteRequest;
 import com.practice.spring.dto.note.ImportNotesRequest;
@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Transactional(readOnly = true)
-public class ImportNoteService {
+public class ImportNoteServiceImpl implements ImportNoteService{
 
     private final ImportNotesLimitValidator importNotesLimitValidator;
     private final NoteRepository noteRepository;
@@ -27,13 +27,14 @@ public class ImportNoteService {
     private final CacheManager cacheManager;
 
     @Autowired
-    public ImportNoteService(ImportNotesLimitValidator importNotesLimitValidator, NoteRepository noteRepository, NoteMapper noteMapper, CacheManager cacheManager) {
+    public ImportNoteServiceImpl(ImportNotesLimitValidator importNotesLimitValidator, NoteRepository noteRepository, NoteMapper noteMapper, CacheManager cacheManager) {
         this.importNotesLimitValidator = importNotesLimitValidator;
         this.noteRepository = noteRepository;
         this.noteMapper = noteMapper;
         this.cacheManager = cacheManager;
     }
 
+    @Override
     @Transactional
     public void importNotes(ImportNotesRequest request){
         AtomicInteger count = new AtomicInteger();

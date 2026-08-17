@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class ExportNoteServiceTest {
+public class ExportNoteServiceImplImplTest {
 
     @Mock
     private JsonExporter jsonExporter;
@@ -55,7 +55,7 @@ public class ExportNoteServiceTest {
     void setUp(){
         exporters = Map.of(jsonFormat, jsonExporter, csvFormat, csvExporter, xmlFormat, xmlExporter);
 
-        exportNoteService = new ExportNoteService(
+        exportNoteService = new ExportNoteServiceImpl(
                 exporters, noteExporterValidator, exportNoteFormatValidator, notesValidator, noteRepository
         );
     }
