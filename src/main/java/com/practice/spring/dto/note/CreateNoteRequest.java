@@ -10,9 +10,5 @@ public record CreateNoteRequest
         String title,
         @NotBlank(message = "тело заметки не должно быть пустым")
         @Size(min = 1, message = "минимальное количество символов 1")
-        String text,
-        @NotBlank(message = "имя автора не должно быть пустым")
-        @Size(min = 3, max = 100, message = "минимальное количество символов 3")
-        String author
-        )
+        String text)
 {}

@@ -70,7 +70,6 @@ public class NoteControllerIT extends AbstractSpringBootIT {
 
         assertThat(createdNote.getTitle()).isEqualTo(request.title());
         assertThat(createdNote.getText()).isEqualTo(request.text());
-        assertThat(createdNote.getAuthor()).isEqualTo(request.author());
 
         String location = result.getResponse().getHeader(HttpHeaders.LOCATION);
 

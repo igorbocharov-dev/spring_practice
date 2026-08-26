@@ -59,7 +59,7 @@ public class NoteServiceImplIT extends AbstractSpringBootIT {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            noteService.update(id, updateNoteRequest1);
+            noteService.update(id, savedNote.getAuthor(), updateNoteRequest1);
             return null;
         });
 
@@ -70,7 +70,7 @@ public class NoteServiceImplIT extends AbstractSpringBootIT {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            noteService.update(id, updateNoteRequest2);
+            noteService.update(id, savedNote.getAuthor(), updateNoteRequest2);
             return null;
         });
 

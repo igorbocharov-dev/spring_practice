@@ -16,4 +16,6 @@ public interface NoteRepository extends JpaRepository<Note, Long> {
              select new com.practice.spring.dto.note.AuthorNoteSummary(count(n),max(n.createdAt))
              from Note n where n.author=:author""")
     Optional<AuthorNoteSummary> getAuthorSummary(@Param("author") String author);
+
+    Optional<Note> findByAuthor(String author);
 }

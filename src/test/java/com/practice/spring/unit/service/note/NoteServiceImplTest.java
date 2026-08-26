@@ -54,10 +54,10 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = NoteFactory.createNoteRequest();
         LocationNoteResponse expectedResponse = NoteFactory.locationNoteResponse(id);
 
-        when(noteMapper.toEntity(createNoteRequest)).thenReturn(note);
+        when(noteMapper.toEntity(note.getAuthor(), createNoteRequest)).thenReturn(note);
         when(noteRepository.save(note)).thenReturn(note);
 
-        LocationNoteResponse response = noteServiceImpl.create(createNoteRequest);
+        LocationNoteResponse response = noteServiceImpl.create(note.getAuthor(), createNoteRequest);
 
         verify(noteLimitValidator).validate(any(Long.class));
 
@@ -109,7 +109,7 @@ public class NoteServiceImplTest {
         when(noteRepository.findById(id)).thenReturn(Optional.of(previousValue));
         when(noteMapper.toNoteResponse(previousValue)).thenReturn(expectedNoteResponse);
 
-        NoteResponse response = noteServiceImpl.update(id, updateNoteRequest);
+        NoteResponse response = noteServiceImpl.update(id, previousValue.getAuthor(), updateNoteRequest);
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);
@@ -127,7 +127,7 @@ public class NoteServiceImplTest {
 
         when(noteRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoteNotFoundException.class, () -> noteServiceImpl.update(id, updateNoteRequest));
+        assertThrows(NoteNotFoundException.class, () -> noteServiceImpl.update(id, "Pavel Durov", updateNoteRequest));
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);

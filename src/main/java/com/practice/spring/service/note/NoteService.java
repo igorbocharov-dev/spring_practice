@@ -8,12 +8,12 @@ public interface NoteService {
 
     NotesResponse findAll();
 
-    LocationNoteResponse create(CreateNoteRequest createNoteRequest);
+    LocationNoteResponse create(String author, CreateNoteRequest createNoteRequest);
 
     NoteResponse getNoteResponseById(Long id);
 
-    NoteResponse update(Long id, UpdateNoteRequest updateNoteRequest);
+    NoteResponse update(Long id, String author, UpdateNoteRequest updateNoteRequest);
 
-    void delete(Long id);
+    void delete(Long id, String author);
 
 }

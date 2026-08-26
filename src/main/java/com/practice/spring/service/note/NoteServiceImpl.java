@@ -2,10 +2,15 @@ package com.practice.spring.service.note;
 
 import com.practice.spring.dto.note.*;
 import com.practice.spring.entity.note.Note;
+import com.practice.spring.event.EventType;
+import com.practice.spring.event.NoteEvent;
+import com.practice.spring.event.NoteEventManager;
+import com.practice.spring.event.NoteEventProducer;
 import com.practice.spring.exception.note.AuthorNotFoundException;
 import com.practice.spring.exception.note.NoteNotFoundException;
 import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
+import com.practice.spring.security.user.Authority;
 import com.practice.spring.service.noteRevision.NoteRevisionService;
 import com.practice.spring.util.validator.IdValidator;
 import com.practice.spring.util.validator.note.NoteLimitValidator;
@@ -15,10 +20,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,20 +44,26 @@ public class NoteServiceImpl implements NoteService{
     private final Counter notesCreatedCounter;
     private final NoteMapper noteMapper;
     private final NoteRevisionService noteRevisionService;
-    private final CacheManager cacheManager;
+    private final NoteEventProducer noteEventProducer;
+    private final NoteEventManager noteEventManager;
 
     @Autowired
     public NoteServiceImpl(IdValidator idValidator,
                            NoteLimitValidator noteLimitValidator,
                            NoteRepository noteRepository,
-                           Counter notesCreatedCounter, NoteMapper noteMapper, NoteRevisionService noteRevisionService, CacheManager cacheManager) {
+                           Counter notesCreatedCounter,
+                           NoteMapper noteMapper,
+                           NoteRevisionService noteRevisionService,
+                           NoteEventProducer noteEventProducer,
+                           NoteEventManager noteEventManager) {
         this.idValidator = idValidator;
         this.noteLimitValidator = noteLimitValidator;
         this.noteRepository = noteRepository;
         this.notesCreatedCounter = notesCreatedCounter;
         this.noteMapper = noteMapper;
         this.noteRevisionService = noteRevisionService;
-        this.cacheManager = cacheManager;
+        this.noteEventProducer = noteEventProducer;
+        this.noteEventManager = noteEventManager;
     }
 
     @Override
@@ -63,15 +80,17 @@ public class NoteServiceImpl implements NoteService{
     }
 
     @Override
-    @CacheEvict(value = "author_summary", key = "#createNoteRequest.author()")
+    @CacheEvict(value = "author_summary", key = "#author")
     @Transactional
-    public LocationNoteResponse create(CreateNoteRequest createNoteRequest){
+    public LocationNoteResponse create(String author, CreateNoteRequest createNoteRequest){
         noteLimitValidator.validate(noteRepository.count());
-        Note entityToCreate = noteMapper.toEntity(createNoteRequest);
+        Note entityToCreate = noteMapper.toEntity(author, createNoteRequest);
         Note savedNote = noteRepository.save(entityToCreate);
         Long id = savedNote.getId();
         notesCreatedCounter.increment();
         log.info("Creating note with id: {}", id);
+        NoteEvent event = noteEventManager.noteEvent(savedNote, EventType.CREATED);
+        noteEventProducer.send(event);
         return new LocationNoteResponse(URI.create("/notes/" + id));
     }
 
@@ -83,23 +102,32 @@ public class NoteServiceImpl implements NoteService{
 
     @Override
     @Transactional
-    @CacheEvict(value = "author_summary", key = "#result.author()")
-    public NoteResponse update(Long id, UpdateNoteRequest updateNoteRequest){
+    @CacheEvict(value = "author_summary", key = "#author")
+    public NoteResponse update(Long id, String author, UpdateNoteRequest updateNoteRequest){
         Note note = findById(id);
+        if (!note.getAuthor().equals(author)){
+            throw new AccessDeniedException("У вас не достаточно прав");
+        }
         noteRevisionService.save(note);
         note.setTitle(updateNoteRequest.title());
         note.setText(updateNoteRequest.text());
+        NoteEvent event = noteEventManager.noteEvent(note, EventType.UPDATED);
+        noteEventProducer.send(event);
         return noteMapper.toNoteResponse(note);
     }
 
     @Override
     @Transactional
-    public void delete(Long id){
+    @CacheEvict(value = "author_summary", key = "#author")
+    public void delete(Long id, String author){
         idValidator.validate(id);
         Note note = findById(id);
-        String author = note.getAuthor();
+        if (!note.getAuthor().equals(author)){
+            throw new AccessDeniedException("У вас не достаточно прав");
+        }
         noteRepository.delete(note);
-        Objects.requireNonNull(cacheManager.getCache("author_summary")).evict(author);
+        NoteEvent event = noteEventManager.noteEvent(note, EventType.DELETED);
+        noteEventProducer.send(event);
     }
 
     private Note findById(Long id){

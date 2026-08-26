@@ -29,7 +29,7 @@ public class NoteFactory {
     }
 
     public static CreateNoteRequest createNoteRequest(){
-        return new CreateNoteRequest(title, text, author);
+        return new CreateNoteRequest(title, text);
     }
 
     public static UpdateNoteRequest updateNoteRequest(){
@@ -59,7 +59,7 @@ public class NoteFactory {
     public static ImportNotesRequest importNotesRequest(int size){
         List<CreateNoteRequest> createNoteRequestList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            createNoteRequestList.add(new CreateNoteRequest(title + i, text, author));
+            createNoteRequestList.add(new CreateNoteRequest(title + i, text));
         }
         return new ImportNotesRequest(createNoteRequestList);
     }
