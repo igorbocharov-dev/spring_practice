@@ -4,7 +4,7 @@ import com.practice.spring.dto.note.ExportNotesResult;
 import com.practice.spring.entity.note.Note;
 import com.practice.spring.service.note.exporter.CsvExporter;
 import com.practice.spring.service.note.exporter.NoteExporter;
-import com.practice.spring.support.factory.NoteFactory;
+import com.practice.spring.support.factory.note.NoteFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 

@@ -6,7 +6,6 @@ import com.practice.spring.entity.note.Note;
 import com.practice.spring.entity.noteRevision.NoteRevision;
 import com.practice.spring.mapper.NoteRevisionMapper;
 import com.practice.spring.repository.note.NoteRevisionRepository;
-import com.practice.spring.security.user.Authority;
 import com.practice.spring.util.validator.note.NoteValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -39,9 +38,6 @@ public class NoteRevisionServiceImpl implements NoteRevisionService {
         noteValidator.validate(note);
         noteRevisionRepository.save(new NoteRevision(note));
     }
-
-    // не стал выносить в отдельный метод, хардкод - да, знаю.(исправлю, после созвона)
-    // TODO: вынести проверку роли
 
     @PreAuthorize(value = "hasAuthority('notes.ADMIN')")
     @Override

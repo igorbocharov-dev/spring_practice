@@ -35,7 +35,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 
         ApiErrorResponse body = new ApiErrorResponse(
                 ErrorType.AUTHENTICATION_ERROR.name(),
-                "Не верные данные для входа",
+                authException.getMessage(),
                 status.value(),
                 Instant.now(clock),
                 null);

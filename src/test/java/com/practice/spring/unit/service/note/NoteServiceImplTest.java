@@ -10,7 +10,7 @@ import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.note.NoteServiceImpl;
 import com.practice.spring.service.noteRevision.NoteRevisionService;
-import com.practice.spring.support.factory.NoteFactory;
+import com.practice.spring.support.factory.note.NoteFactory;
 import com.practice.spring.util.validator.IdValidator;
 import com.practice.spring.util.validator.note.NoteLimitValidator;
 import io.micrometer.core.instrument.Counter;

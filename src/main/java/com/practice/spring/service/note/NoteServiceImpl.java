@@ -10,28 +10,21 @@ import com.practice.spring.exception.note.AuthorNotFoundException;
 import com.practice.spring.exception.note.NoteNotFoundException;
 import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
-import com.practice.spring.security.user.Authority;
 import com.practice.spring.service.noteRevision.NoteRevisionService;
 import com.practice.spring.util.validator.IdValidator;
 import com.practice.spring.util.validator.note.NoteLimitValidator;
 import io.micrometer.core.instrument.Counter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -66,6 +59,7 @@ public class NoteServiceImpl implements NoteService{
         this.noteEventManager = noteEventManager;
     }
 
+    @PreAuthorize(value = "hasAuthority('notes.ADMIN')")
     @Override
     @Cacheable(value = "author_summary", key = "#author")
     public AuthorNoteSummary authorNoteSummary(String author){

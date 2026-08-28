@@ -24,7 +24,7 @@ public class NoteEventLogService {
 
     @Transactional
     public void save(NoteEvent event){
-        if(noteEventLogRepository.existsByNoteId(event.noteId())){
+        if(noteEventLogRepository.existsByEventId(event.eventId())){
             return;
         }
         noteEventLogRepository.save(new NoteEventLog(

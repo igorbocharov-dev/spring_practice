@@ -1,13 +1,16 @@
 package com.practice.spring.security.user;
 
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
+@Slf4j
 public class UserManager {
 
     private final List<User> users = new ArrayList<>();
@@ -21,10 +24,11 @@ public class UserManager {
 
     @PostConstruct
     public void initUsers(){
-        User user1 = new User(1L, passwordEncoder.encode("password123"), "Ivan", List.of(Authority.READ));
-        User user2 = new User(2L, passwordEncoder.encode("password123"), "Maxim", List.of(Authority.WRITE));
-        User user3 = new User(3L, passwordEncoder.encode("password123"), "Alexander", List.of(Authority.ADMIN));
+        User user1 = new User(1L, "Ivan", passwordEncoder.encode("password123"), List.of(Authority.READ.getAuthority()));
+        User user2 = new User(2L, "Maxim", passwordEncoder.encode("password123"), List.of(Authority.WRITE.getAuthority()));
+        User user3 = new User(3L, "Alexander",passwordEncoder.encode("password123"), List.of(Authority.ADMIN.getAuthority()));
         users.addAll(List.of(user1, user2, user3));
+        log.info("Users init successful: {}", users);
     }
 
     public List<User> getUsers() {

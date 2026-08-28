@@ -30,7 +30,6 @@ public class JwtTokenService {
     }
 
     // У пользователя может быть много ролей, поэтому withArrayClaim() на будущее.
-    // Как лучше преобразовать authorities в String[] не придумал
 
     public String generateToken(TokenSubject subject){
         Instant now = Instant.now();

@@ -1,7 +1,7 @@
 package com.practice.spring.security.config;
 
-import com.practice.spring.security.handler.AuthenticationEntryPointImpl;
 import com.practice.spring.security.filter.JwtFilter;
+import com.practice.spring.security.handler.AuthenticationEntryPointImpl;
 import com.practice.spring.security.user.Authority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -44,11 +44,15 @@ public class SecurityConfig {
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth-> auth
-                        .requestMatchers(HttpMethod.GET, "/notes", "/notes/**", "/notes/export").hasAuthority(Authority.READ.getAuthority())
+                        .requestMatchers("/auth/token").permitAll()
+                        .requestMatchers("/notes/stats").permitAll()
+                        .requestMatchers("/notes/history").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/notes", "/notes/export").hasAuthority(Authority.READ.getAuthority())
                         .requestMatchers(HttpMethod.POST, "/notes/create", "/notes/import").hasAuthority(Authority.WRITE.getAuthority())
-                        .requestMatchers(HttpMethod.PUT, "/notes/update/**").hasAuthority(Authority.WRITE.getAuthority())
-                        .requestMatchers(HttpMethod.DELETE, "/notes/delete/**").hasAuthority(Authority.WRITE.getAuthority())
                         .requestMatchers(HttpMethod.GET, "/actuator/**").hasAuthority(Authority.ADMIN.getAuthority())
+                        .requestMatchers(HttpMethod.PUT, "/notes/update/*").hasAuthority(Authority.WRITE.getAuthority())
+                        .requestMatchers(HttpMethod.DELETE, "/notes/delete/*").hasAuthority(Authority.WRITE.getAuthority())
+                        .requestMatchers(HttpMethod.GET, "/notes/*").hasAuthority(Authority.READ.getAuthority())
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

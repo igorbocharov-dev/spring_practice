@@ -4,7 +4,9 @@ import com.practice.spring.entity.noteEventLog.NoteEventLog;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public interface NoteEventLogRepository extends JpaRepository<NoteEventLog, Long> {
-    boolean existsByNoteId(Long noteId);
+    boolean existsByEventId(UUID eventId);
 }

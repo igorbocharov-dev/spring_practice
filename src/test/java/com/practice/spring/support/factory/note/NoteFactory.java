@@ -1,4 +1,4 @@
-package com.practice.spring.support.factory;
+package com.practice.spring.support.factory.note;
 
 import com.practice.spring.dto.note.*;
 import com.practice.spring.entity.note.Note;

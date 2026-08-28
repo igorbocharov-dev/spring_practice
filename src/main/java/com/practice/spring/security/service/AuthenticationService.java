@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public class AuthenticationService {
@@ -30,7 +30,7 @@ public class AuthenticationService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.username(), loginRequest.password()));
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
-        Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) principal.getAuthorities();
+        List<String> authorities =  principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         String username = principal.getUsername();
         TokenSubject tokenSubject = new TokenSubject(authorities, username);
         String accessToken = jwtTokenService.generateToken(tokenSubject);
