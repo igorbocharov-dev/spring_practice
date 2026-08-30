@@ -5,11 +5,16 @@ import com.practice.spring.dto.note.LocationNoteResponse;
 import com.practice.spring.dto.note.NoteResponse;
 import com.practice.spring.dto.note.UpdateNoteRequest;
 import com.practice.spring.entity.note.Note;
+import com.practice.spring.event.EventType;
+import com.practice.spring.event.NoteEvent;
+import com.practice.spring.event.NoteEventManager;
+import com.practice.spring.event.NoteEventProducer;
 import com.practice.spring.exception.note.NoteNotFoundException;
 import com.practice.spring.mapper.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.note.NoteServiceImpl;
 import com.practice.spring.service.noteRevision.NoteRevisionService;
+import com.practice.spring.support.factory.event.NoteEventFactory;
 import com.practice.spring.support.factory.note.NoteFactory;
 import com.practice.spring.util.validator.IdValidator;
 import com.practice.spring.util.validator.note.NoteLimitValidator;
@@ -23,8 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -43,19 +47,25 @@ public class NoteServiceImplTest {
     private NoteMapper noteMapper;
     @Mock
     private NoteRevisionService noteRevisionService;
+    @Mock
+    private NoteEventProducer noteEventProducer;
+    @Mock
+    private NoteEventManager noteEventManager;
 
     @InjectMocks
     private NoteServiceImpl noteServiceImpl;
 
     @Test
     void createNote_ShouldCreateEntityAndReturnLocation(){
-        Long id = 1L;
-        Note note = NoteFactory.note(id);
+        Note note = NoteFactory.note(1L);
         CreateNoteRequest createNoteRequest = NoteFactory.createNoteRequest();
-        LocationNoteResponse expectedResponse = NoteFactory.locationNoteResponse(id);
+        LocationNoteResponse expectedResponse = NoteFactory.locationNoteResponse(note.getId());
+
+        NoteEvent event = NoteEventFactory.noteEvent(note, EventType.CREATED);
 
         when(noteMapper.toEntity(note.getAuthor(), createNoteRequest)).thenReturn(note);
         when(noteRepository.save(note)).thenReturn(note);
+        when(noteEventManager.noteEvent(note, EventType.CREATED)).thenReturn(event);
 
         LocationNoteResponse response = noteServiceImpl.create(note.getAuthor(), createNoteRequest);
 
@@ -72,6 +82,12 @@ public class NoteServiceImplTest {
         assertEquals(savedNote.getText(), createNoteRequest.text());
 
         verify(notesCreatedCounter).increment();
+
+        ArgumentCaptor<NoteEvent> eventArgumentCaptor = ArgumentCaptor.forClass(NoteEvent.class);
+        verify(noteEventProducer).send(eventArgumentCaptor.capture());
+
+        NoteEvent actualEvent = eventArgumentCaptor.getValue();
+        assertSame(event, actualEvent);
     }
 
     @Test
@@ -106,8 +122,11 @@ public class NoteServiceImplTest {
         UpdateNoteRequest updateNoteRequest = NoteFactory.updateNoteRequest();
         NoteResponse expectedNoteResponse = NoteFactory.updatedNoteResponse(updateNoteRequest, previousValue.getAuthor());
 
+        NoteEvent event = NoteEventFactory.noteEvent(previousValue, EventType.UPDATED);
+
         when(noteRepository.findById(id)).thenReturn(Optional.of(previousValue));
         when(noteMapper.toNoteResponse(previousValue)).thenReturn(expectedNoteResponse);
+        when(noteEventManager.noteEvent(previousValue, EventType.UPDATED)).thenReturn(event);
 
         NoteResponse response = noteServiceImpl.update(id, previousValue.getAuthor(), updateNoteRequest);
 
@@ -118,6 +137,11 @@ public class NoteServiceImplTest {
         assertEquals(expectedNoteResponse.title(), response.title());
         assertEquals(expectedNoteResponse.text(), response.text());
 
+        ArgumentCaptor<NoteEvent> eventArgumentCaptor = ArgumentCaptor.forClass(NoteEvent.class);
+        verify(noteEventProducer).send(eventArgumentCaptor.capture());
+
+        NoteEvent actualEvent = eventArgumentCaptor.getValue();
+        assertSame(event, actualEvent);
     }
 
     @Test
@@ -131,6 +155,6 @@ public class NoteServiceImplTest {
 
         verify(idValidator).validate(id);
         verify(noteRepository).findById(id);
-        verifyNoInteractions(noteMapper);
+        verifyNoInteractions(noteEventManager, noteEventProducer, noteMapper);
     }
 }

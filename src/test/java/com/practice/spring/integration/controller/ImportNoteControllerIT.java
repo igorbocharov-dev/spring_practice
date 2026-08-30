@@ -5,8 +5,10 @@ import com.practice.spring.dto.note.ImportNotesRequest;
 import com.practice.spring.error.ApiErrorResponse;
 import com.practice.spring.error.ErrorType;
 import com.practice.spring.repository.note.NoteRepository;
+import com.practice.spring.security.user.Authority;
 import com.practice.spring.support.config.AbstractSpringBootIT;
 import com.practice.spring.support.factory.note.NoteFactory;
+import com.practice.spring.support.factory.security.WithMockUserPrincipal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ public class ImportNoteControllerIT extends AbstractSpringBootIT {
     }
 
     @Test
+    @WithMockUserPrincipal(authorities = Authority.WRITE)
     void shouldDontCreatedRecords_WhenImportWasExceededLimit() throws Exception{
         ImportNotesRequest request = NoteFactory.importNotesRequest(3);
         String jsonRequest = objectMapper.writeValueAsString(request);
