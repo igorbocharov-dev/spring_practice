@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/notes/update/*").hasAuthority(Authority.WRITE.getAuthority())
                         .requestMatchers(HttpMethod.DELETE, "/notes/delete/*").hasAuthority(Authority.WRITE.getAuthority())
                         .requestMatchers(HttpMethod.GET, "/notes/*").hasAuthority(Authority.READ.getAuthority())
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
