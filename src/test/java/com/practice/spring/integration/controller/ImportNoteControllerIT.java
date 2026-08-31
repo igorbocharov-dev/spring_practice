@@ -6,7 +6,7 @@ import com.practice.spring.error.ApiErrorResponse;
 import com.practice.spring.error.ErrorType;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.support.config.AbstractSpringBootIT;
-import com.practice.spring.support.factory.NoteFactory;
+import com.practice.spring.support.factory.note.NoteFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

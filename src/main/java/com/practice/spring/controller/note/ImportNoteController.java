@@ -5,6 +5,7 @@ import com.practice.spring.service.note.importer.ImportNoteService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,8 +23,8 @@ public class ImportNoteController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> importNotes(@RequestBody @Valid ImportNotesRequest request){
-        importNoteService.importNotes(request);
+    public ResponseEntity<Void> importNotes(@AuthenticationPrincipal String author, @RequestBody @Valid ImportNotesRequest request){
+        importNoteService.importNotes(author, request);
         return ResponseEntity.noContent().build();
     }
 }

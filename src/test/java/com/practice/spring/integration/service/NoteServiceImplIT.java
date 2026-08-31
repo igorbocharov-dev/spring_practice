@@ -6,7 +6,7 @@ import com.practice.spring.entity.note.Note;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.note.NoteService;
 import com.practice.spring.support.config.AbstractSpringBootIT;
-import com.practice.spring.support.factory.NoteFactory;
+import com.practice.spring.support.factory.note.NoteFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ public class NoteServiceImplIT extends AbstractSpringBootIT {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            noteService.update(id, updateNoteRequest1);
+            noteService.update(id, savedNote.getAuthor(), updateNoteRequest1);
             return null;
         });
 
@@ -70,7 +70,7 @@ public class NoteServiceImplIT extends AbstractSpringBootIT {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
-            noteService.update(id, updateNoteRequest2);
+            noteService.update(id, savedNote.getAuthor(), updateNoteRequest2);
             return null;
         });
 

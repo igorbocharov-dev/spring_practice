@@ -10,5 +10,5 @@ public interface NoteMapper {
 
     NoteResponse toNoteResponse(Note note);
 
-    Note toEntity(CreateNoteRequest createNoteRequest);
+    Note toEntity(String author, CreateNoteRequest createNoteRequest);
 }

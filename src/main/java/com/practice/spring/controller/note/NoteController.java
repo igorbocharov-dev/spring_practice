@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,11 +33,10 @@ public class NoteController {
         this.noteRevisionService = noteRevisionService;
     }
 
-
     @PostMapping("/create")
-    public ResponseEntity<Void> createNote(@RequestBody @Valid CreateNoteRequest createNoteRequest){
+    public ResponseEntity<Void> createNote(@AuthenticationPrincipal String author, @RequestBody @Valid CreateNoteRequest createNoteRequest){
         log.info("Request to create note with title: {} ; and text: {}", createNoteRequest.title(), createNoteRequest.text());
-        return ResponseEntity.created(noteService.create(createNoteRequest).location()).build();
+        return ResponseEntity.created(noteService.create(author, createNoteRequest).location()).build();
     }
 
     @GetMapping
@@ -61,13 +63,13 @@ public class NoteController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<NoteResponse> updateNote(@PathVariable Long id, @RequestBody @Valid UpdateNoteRequest updateNoteRequest){
-        return ResponseEntity.ok(noteService.update(id, updateNoteRequest));
+    public ResponseEntity<NoteResponse> updateNote(@AuthenticationPrincipal String author, @PathVariable Long id, @RequestBody @Valid UpdateNoteRequest updateNoteRequest){
+        return ResponseEntity.ok(noteService.update(id, author, updateNoteRequest));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<HttpStatus> deleteNote(@PathVariable Long id){
-        noteService.delete(id);
+    public ResponseEntity<HttpStatus> deleteNote(@AuthenticationPrincipal String author, @PathVariable Long id){
+        noteService.delete(id, author);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

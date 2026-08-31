@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class NoteRevisionServiceImpl implements NoteRevisionService {
         noteRevisionRepository.save(new NoteRevision(note));
     }
 
+    @PreAuthorize(value = "hasAuthority('notes.ADMIN')")
     @Override
     public SliceResponse<NoteRevisionResponse> getAllHistory(int page, int size){
         Slice<NoteRevision> noteRevisionPage = noteRevisionRepository.findAllBy

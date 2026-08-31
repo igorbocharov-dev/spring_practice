@@ -7,7 +7,7 @@ import com.practice.spring.exception.note.NoteNotFoundException;
 import com.practice.spring.exception.note.UnsupportedNoteExportFormatException;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.note.exporter.*;
-import com.practice.spring.support.factory.NoteFactory;
+import com.practice.spring.support.factory.note.NoteFactory;
 import com.practice.spring.util.validator.note.NotesValidator;
 import com.practice.spring.util.validator.note.exporter.ExportNoteFormatValidator;
 import com.practice.spring.util.validator.note.exporter.NoteExporterValidator;
