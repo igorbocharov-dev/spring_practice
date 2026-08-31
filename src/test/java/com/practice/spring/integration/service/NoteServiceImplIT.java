@@ -7,6 +7,7 @@ import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.note.NoteService;
 import com.practice.spring.support.config.AbstractSpringBootIT;
 import com.practice.spring.support.factory.note.NoteFactory;
+import com.practice.spring.support.factory.security.WithMockUserPrincipal;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,7 @@ public class NoteServiceImplIT extends AbstractSpringBootIT {
     }
 
     @Test
+    @WithMockUserPrincipal(username = "Ivan")
     void authorNoteSummary_ShouldDemoCacheable(){
         String author = "Ivan";
         long size = 10;

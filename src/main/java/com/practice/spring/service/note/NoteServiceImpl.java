@@ -59,7 +59,7 @@ public class NoteServiceImpl implements NoteService{
         this.noteEventManager = noteEventManager;
     }
 
-    @PreAuthorize(value = "hasAuthority('notes.ADMIN')")
+    @PreAuthorize(value = "hasAuthority('notes.ADMIN') or #author==authentication.name")
     @Override
     @Cacheable(value = "author_summary", key = "#author")
     public AuthorNoteSummary authorNoteSummary(String author){
