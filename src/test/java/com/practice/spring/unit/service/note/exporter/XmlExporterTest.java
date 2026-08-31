@@ -28,7 +28,7 @@ public class XmlExporterTest {
         String json = new String(result.data(), StandardCharsets.UTF_8);
 
         assertTrue(json.contains(NoteFactory.title));
-        assertTrue(json.contains(NoteFactory.body));
+        assertTrue(json.contains(NoteFactory.text));
 
         assertEquals(MediaType.APPLICATION_XML, result.contentType());
     }

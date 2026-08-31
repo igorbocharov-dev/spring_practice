@@ -29,7 +29,7 @@ public class CsvExporter implements NoteExporter{
                 printer.printRecord(
                         note.getId(),
                         note.getTitle(),
-                        note.getBody()
+                        note.getText()
                 );
             }
         } catch (IOException e) {

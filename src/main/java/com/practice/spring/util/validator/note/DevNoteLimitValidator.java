@@ -18,7 +18,7 @@ public final class DevNoteLimitValidator implements NoteLimitValidator{
     }
 
     @Override
-    public void validate(Integer currentCountOfNotes) {
+    public void validate(Long currentCountOfNotes) {
         if(currentCountOfNotes >= noteConfiguration.getLimit()) {
             throw new NoteLimitExceededException("Превышен лимит создания заметок");
         }

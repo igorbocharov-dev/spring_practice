@@ -5,6 +5,7 @@ import com.practice.spring.error.ErrorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -26,6 +27,16 @@ public class ApiGlobalHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ApiErrorResponse(
                         ErrorType.NOTE_NOT_FOUND_ERROR.name(),
+                        e.getMessage(),
+                        HttpStatus.NOT_FOUND.value(),
+                        Instant.now(clock), null));
+    }
+
+    @ExceptionHandler(AuthorNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> authorNotFoundHandle(AuthorNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorResponse(
+                        ErrorType.AUTHOR_NOT_FOUND_ERROR.name(),
                         e.getMessage(),
                         HttpStatus.NOT_FOUND.value(),
                         Instant.now(clock), null));
@@ -68,6 +79,26 @@ public class ApiGlobalHandler {
                         ErrorType.PARSE_NOTE_ERROR.name(),
                         e.getMessage(),
                         HttpStatus.BAD_REQUEST.value(),
+                        Instant.now(clock), null));
+    }
+
+    @ExceptionHandler(ImportNoteException.class)
+    public ResponseEntity<ApiErrorResponse> importNoteHandle(ImportNoteException e){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(
+                        ErrorType.IMPORT_NOTES_ERROR.name(),
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value(),
+                        Instant.now(clock), null));
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiErrorResponse> objectOptimisticLockingFailureHandle(ObjectOptimisticLockingFailureException e){
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(
+                        ErrorType.OPTIMISTIC_LOCKING_ERROR.name(),
+                        e.getMessage(),
+                        HttpStatus.CONFLICT.value(),
                         Instant.now(clock), null));
     }
 }

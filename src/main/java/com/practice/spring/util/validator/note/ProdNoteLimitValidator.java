@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 public final class ProdNoteLimitValidator implements NoteLimitValidator{
 
     @Override
-    public void validate(Integer currentCountOfNotes) {
+    public void validate(Long currentCountOfNotes) {
 
     }
 }

@@ -1,23 +1,52 @@
 package com.practice.spring.entity.note;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.time.Instant;
 import java.util.Objects;
 
+@Entity
+@Table(name = "Note")
 @Getter
 @Setter
 public class Note {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "title")
     private String title;
 
-    private String body;
+    @Column(name = "text")
+    private String text;
 
-    public Note(String title, String body) {
+    @Column(name = "author")
+    private String author;
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private Instant updatedAt;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
+
+    public Note(){}
+
+    public Note(String title, String text, String author) {
         this.title = title;
-        this.body = body;
+        this.text = text;
+        this.author = author;
     }
 
     @Override
@@ -31,14 +60,5 @@ public class Note {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Note{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                '}';
     }
 }
