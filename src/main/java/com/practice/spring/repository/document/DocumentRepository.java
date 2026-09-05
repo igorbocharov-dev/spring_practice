@@ -12,6 +12,4 @@ import java.util.UUID;
 
 @Repository
 public interface DocumentRepository extends MongoRepository<DocumentEntity, UUID> {
-    @Query(value = "{'status': ?0}", fields = "{'_id': 1}")
-    List<UUID> findIdsByStatus(DocumentStatus status, Limit limit);
 }
