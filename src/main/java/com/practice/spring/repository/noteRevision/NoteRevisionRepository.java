@@ -1,4 +1,4 @@
-package com.practice.spring.repository.note;
+package com.practice.spring.repository.noteRevision;
 
 import com.practice.spring.entity.noteRevision.NoteRevision;
 import org.springframework.data.domain.Pageable;

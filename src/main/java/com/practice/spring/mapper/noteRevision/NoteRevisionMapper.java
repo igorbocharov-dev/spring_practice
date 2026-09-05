@@ -1,4 +1,4 @@
-package com.practice.spring.mapper;
+package com.practice.spring.mapper.noteRevision;
 
 import com.practice.spring.dto.noteRevision.NoteRevisionResponse;
 import com.practice.spring.entity.noteRevision.NoteRevision;

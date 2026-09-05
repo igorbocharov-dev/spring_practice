@@ -1,13 +1,16 @@
 spring:
+  data:
+    mongodb:
+      uri: "mongodb://${MONGO_DB_HOST}:${MONGO_DB_PORT}/${MONGO_DB_NAME}"
   application:
     name: spring
   profiles:
     active: dev
   datasource:
-    url: "jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}"
+    url: "jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
     driver-class-name: org.postgresql.Driver
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,7 +20,7 @@ spring:
         show_sql: true
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration/postgres
     validate-on-migrate: true
   kafka:
     bootstrap-servers: localhost:9092
@@ -38,6 +41,12 @@ spring:
         spring.deserializer.value.delegate.class: "org.springframework.kafka.support.serializer.JsonDeserializer"
         spring.json.trusted.packages: "com.practice.spring.event"
         spring.json.value.default.type: "com.practice.spring.event.NoteEvent"
+
+clickhouse:
+  url: "jdbc:clickhouse://localhost:8123/${CLICKHOUSE_DB}"
+  driver-class-name: com.clickhouse.jdbc.ClickHouseDriver
+  username: ${CLICKHOUSE_USER}
+  password: ${CLICKHOUSE_PASSWORD}
 
 management:
   endpoint:

@@ -5,12 +5,12 @@ import com.practice.spring.dto.note.LocationNoteResponse;
 import com.practice.spring.dto.note.NoteResponse;
 import com.practice.spring.dto.note.UpdateNoteRequest;
 import com.practice.spring.entity.note.Note;
-import com.practice.spring.event.EventType;
+import com.practice.spring.event.NoteEventType;
 import com.practice.spring.event.NoteEvent;
 import com.practice.spring.event.NoteEventManager;
 import com.practice.spring.event.NoteEventProducer;
 import com.practice.spring.exception.note.NoteNotFoundException;
-import com.practice.spring.mapper.NoteMapper;
+import com.practice.spring.mapper.note.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.note.NoteServiceImpl;
 import com.practice.spring.service.noteRevision.NoteRevisionService;
@@ -61,11 +61,11 @@ public class NoteServiceImplTest {
         CreateNoteRequest createNoteRequest = NoteFactory.createNoteRequest();
         LocationNoteResponse expectedResponse = NoteFactory.locationNoteResponse(note.getId());
 
-        NoteEvent event = NoteEventFactory.noteEvent(note, EventType.CREATED);
+        NoteEvent event = NoteEventFactory.noteEvent(note, NoteEventType.CREATED);
 
         when(noteMapper.toEntity(note.getAuthor(), createNoteRequest)).thenReturn(note);
         when(noteRepository.save(note)).thenReturn(note);
-        when(noteEventManager.noteEvent(note, EventType.CREATED)).thenReturn(event);
+        when(noteEventManager.noteEvent(note, NoteEventType.CREATED)).thenReturn(event);
 
         LocationNoteResponse response = noteServiceImpl.create(note.getAuthor(), createNoteRequest);
 
@@ -122,11 +122,11 @@ public class NoteServiceImplTest {
         UpdateNoteRequest updateNoteRequest = NoteFactory.updateNoteRequest();
         NoteResponse expectedNoteResponse = NoteFactory.updatedNoteResponse(updateNoteRequest, previousValue.getAuthor());
 
-        NoteEvent event = NoteEventFactory.noteEvent(previousValue, EventType.UPDATED);
+        NoteEvent event = NoteEventFactory.noteEvent(previousValue, NoteEventType.UPDATED);
 
         when(noteRepository.findById(id)).thenReturn(Optional.of(previousValue));
         when(noteMapper.toNoteResponse(previousValue)).thenReturn(expectedNoteResponse);
-        when(noteEventManager.noteEvent(previousValue, EventType.UPDATED)).thenReturn(event);
+        when(noteEventManager.noteEvent(previousValue, NoteEventType.UPDATED)).thenReturn(event);
 
         NoteResponse response = noteServiceImpl.update(id, previousValue.getAuthor(), updateNoteRequest);
 
