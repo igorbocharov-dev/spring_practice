@@ -44,9 +44,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(authenticationEntryPoint))
                 .authorizeHttpRequests(auth-> auth
-                        .requestMatchers("/auth/token").permitAll()
-                        .requestMatchers("/notes/stats").permitAll()
-                        .requestMatchers("/notes/history").permitAll()
+                        .requestMatchers("/auth/token", "/api/v1/document", "/notes/stats", "/notes/history").permitAll()
                         .requestMatchers(HttpMethod.GET, "/notes", "/notes/export").hasAuthority(Authority.READ.getAuthority())
                         .requestMatchers(HttpMethod.POST, "/notes/create", "/notes/import").hasAuthority(Authority.WRITE.getAuthority())
                         .requestMatchers(HttpMethod.GET, "/actuator/**").hasAuthority(Authority.ADMIN.getAuthority())

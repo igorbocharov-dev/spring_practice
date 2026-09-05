@@ -2,7 +2,7 @@ package com.practice.spring.service.note.importer;
 
 import com.practice.spring.dto.note.CreateNoteRequest;
 import com.practice.spring.dto.note.ImportNotesRequest;
-import com.practice.spring.mapper.NoteMapper;
+import com.practice.spring.mapper.note.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.util.validator.note.ImportNotesLimitValidator;
 import org.springframework.beans.factory.annotation.Autowired;
