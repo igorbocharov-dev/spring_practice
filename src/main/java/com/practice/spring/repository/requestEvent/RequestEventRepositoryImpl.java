@@ -22,7 +22,7 @@ public class RequestEventRepositoryImpl implements RequestEventRepository{
             errorTypeName = event.errorType().name();
         }
         jdbcClient.sql("""
-                INSERT INTO Notes_ClickHouse.request_events(
+                INSERT INTO request_events(
                 event_time,
                 doc_id,
                 event_type,

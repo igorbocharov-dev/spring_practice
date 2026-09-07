@@ -18,10 +18,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         show_sql: true
-  flyway:
-    enabled: true
-    locations: classpath:db/migration/postgres
-    validate-on-migrate: true
   kafka:
     bootstrap-servers: localhost:9092
 

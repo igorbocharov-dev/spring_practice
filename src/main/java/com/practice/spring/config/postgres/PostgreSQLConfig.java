@@ -1,6 +1,8 @@
 package com.practice.spring.config.postgres;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationInitializer;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,5 +28,18 @@ public class PostgreSQLConfig {
             DataSourceProperties properties) {
 
         return properties.initializeDataSourceBuilder().build();
+    }
+
+    @Bean
+    Flyway postgresFlyway(@Qualifier("postgresDataSource") DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:db/migration/postgres")
+                .load();
+    }
+
+    @Bean
+    FlywayMigrationInitializer postgresFlywayInitializer(@Qualifier("postgresFlyway") Flyway flyway) {
+        return new FlywayMigrationInitializer(flyway);
     }
 }
