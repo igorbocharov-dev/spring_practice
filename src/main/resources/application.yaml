@@ -69,6 +69,10 @@ import:
   note:
     limit: 2
 
+document:
+  task:
+    batch-update-limit: 5
+
 jwt:
   jwt-secret-key: ${JWT_SECRET}
   issuer: app-name
