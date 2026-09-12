@@ -10,11 +10,11 @@ import com.practice.spring.dto.paging.SliceResponse;
 import com.practice.spring.entity.note.Note;
 import com.practice.spring.entity.noteEventLog.NoteEventLog;
 import com.practice.spring.entity.noteRevision.NoteRevision;
-import com.practice.spring.event.EventType;
+import com.practice.spring.event.NoteEventType;
 import com.practice.spring.event.NoteEvent;
 import com.practice.spring.event.NoteEventProducer;
 import com.practice.spring.repository.note.NoteRepository;
-import com.practice.spring.repository.note.NoteRevisionRepository;
+import com.practice.spring.repository.noteRevision.NoteRevisionRepository;
 import com.practice.spring.repository.noteEventLog.NoteEventLogRepository;
 import com.practice.spring.security.user.Authority;
 import com.practice.spring.support.config.AbstractSpringBootIT;
@@ -146,14 +146,14 @@ public class NoteControllerIT extends AbstractSpringBootIT {
                 return record.key().equals(createdNote.getId().toString())
                         && event.noteId().equals(createdNote.getId())
                         && event.author().equals(username)
-                        && event.type().equals(EventType.CREATED);
+                        && event.type().equals(NoteEventType.CREATED);
             });
 
             NoteEventLog eventLog = noteEventLogRepository.findAll().getFirst();
             assertThat(eventLog).isNotNull();
             assertThat(eventLog.getNoteId()).isEqualTo(createdNote.getId());
             assertThat(eventLog.getAuthor()).isEqualTo(createdNote.getAuthor());
-            assertThat(eventLog.getType()).isEqualTo(EventType.CREATED);
+            assertThat(eventLog.getType()).isEqualTo(NoteEventType.CREATED);
         });
     }
 
@@ -161,7 +161,7 @@ public class NoteControllerIT extends AbstractSpringBootIT {
     void shouldIgnoreDuplicateEvent(){
         UUID uuid = UUID.randomUUID();
         NoteEvent event = new NoteEvent(1L, "John Preston",
-                uuid, EventType.CREATED, Instant.now(clock));
+                uuid, NoteEventType.CREATED, Instant.now(clock));
 
         producer.send(event);
         await().atMost(Duration.ofSeconds(2)).untilAsserted(()->

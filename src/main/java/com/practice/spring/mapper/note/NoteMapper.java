@@ -1,4 +1,4 @@
-package com.practice.spring.mapper;
+package com.practice.spring.mapper.note;
 
 import com.practice.spring.dto.note.CreateNoteRequest;
 import com.practice.spring.dto.note.NoteResponse;

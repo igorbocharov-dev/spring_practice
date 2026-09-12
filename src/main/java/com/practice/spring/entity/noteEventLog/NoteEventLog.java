@@ -1,6 +1,6 @@
 package com.practice.spring.entity.noteEventLog;
 
-import com.practice.spring.event.EventType;
+import com.practice.spring.event.NoteEventType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +30,7 @@ public class NoteEventLog {
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "type")
-    private EventType type;
+    private NoteEventType type;
 
     @Column(name = "occurred_at", updatable = false)
     private Instant occurredAt;
@@ -40,7 +40,7 @@ public class NoteEventLog {
 
     public NoteEventLog() {}
 
-    public NoteEventLog(Long noteId, String author, UUID eventId, EventType type, Instant occurredAt, Instant receivedAt) {
+    public NoteEventLog(Long noteId, String author, UUID eventId, NoteEventType type, Instant occurredAt, Instant receivedAt) {
         this.noteId = noteId;
         this.author = author;
         this.eventId = eventId;

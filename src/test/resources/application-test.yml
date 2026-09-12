@@ -5,5 +5,3 @@ spring:
     properties:
       hibernate:
         generate_statistics: true
-  flyway:
-    enabled: true

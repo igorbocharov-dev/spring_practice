@@ -1,5 +1,5 @@
 package com.practice.spring.event;
 
-public enum EventType {
+public enum NoteEventType {
     CREATED, UPDATED, DELETED;
 }

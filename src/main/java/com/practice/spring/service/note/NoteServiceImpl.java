@@ -2,13 +2,13 @@ package com.practice.spring.service.note;
 
 import com.practice.spring.dto.note.*;
 import com.practice.spring.entity.note.Note;
-import com.practice.spring.event.EventType;
+import com.practice.spring.event.NoteEventType;
 import com.practice.spring.event.NoteEvent;
 import com.practice.spring.event.NoteEventManager;
 import com.practice.spring.event.NoteEventProducer;
 import com.practice.spring.exception.note.AuthorNotFoundException;
 import com.practice.spring.exception.note.NoteNotFoundException;
-import com.practice.spring.mapper.NoteMapper;
+import com.practice.spring.mapper.note.NoteMapper;
 import com.practice.spring.repository.note.NoteRepository;
 import com.practice.spring.service.noteRevision.NoteRevisionService;
 import com.practice.spring.util.validator.IdValidator;
@@ -83,7 +83,7 @@ public class NoteServiceImpl implements NoteService{
         Long id = savedNote.getId();
         notesCreatedCounter.increment();
         log.info("Creating note with id: {}", id);
-        NoteEvent event = noteEventManager.noteEvent(savedNote, EventType.CREATED);
+        NoteEvent event = noteEventManager.noteEvent(savedNote, NoteEventType.CREATED);
         noteEventProducer.send(event);
         return new LocationNoteResponse(URI.create("/notes/" + id));
     }
@@ -105,7 +105,7 @@ public class NoteServiceImpl implements NoteService{
         noteRevisionService.save(note);
         note.setTitle(updateNoteRequest.title());
         note.setText(updateNoteRequest.text());
-        NoteEvent event = noteEventManager.noteEvent(note, EventType.UPDATED);
+        NoteEvent event = noteEventManager.noteEvent(note, NoteEventType.UPDATED);
         noteEventProducer.send(event);
         return noteMapper.toNoteResponse(note);
     }
@@ -120,7 +120,7 @@ public class NoteServiceImpl implements NoteService{
             throw new AccessDeniedException("У вас не достаточно прав");
         }
         noteRepository.delete(note);
-        NoteEvent event = noteEventManager.noteEvent(note, EventType.DELETED);
+        NoteEvent event = noteEventManager.noteEvent(note, NoteEventType.DELETED);
         noteEventProducer.send(event);
     }
 

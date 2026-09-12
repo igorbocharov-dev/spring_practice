@@ -18,7 +18,7 @@ public final class NoteEventManager {
         this.clock = clock;
     }
 
-    public NoteEvent noteEvent(Note note, EventType type){
+    public NoteEvent noteEvent(Note note, NoteEventType type){
         return new NoteEvent(
                 note.getId(),
                 note.getAuthor(),
